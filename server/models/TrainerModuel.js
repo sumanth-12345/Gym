@@ -20,7 +20,9 @@ const trainerSchema = new mongoose.Schema({
     joinDate: {
         type: Date,
         required: true
-    }
+    },
+    ownerId: { type: mongoose.Schema.Types.ObjectId, ref: "Owner", required: true },
+
 }, { timestamps: true });
 
 trainerSchema.pre("save", async function () {

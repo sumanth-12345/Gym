@@ -1,243 +1,3 @@
-// import { Routes, Route, Navigate } from "react-router-dom";
-
-
-
-
-// // Owner screens
-// import AddMember from "./pages/owner/AddMember"; // if file is AddMember.jsx
-// import Memberlist from "./pages/owner/Memberslist";
-
-// // ... import other owner screens
-
-// // Member screens
-
-
-
-// import Layout from "./component/Layout";
-// import UpDateMember from "./pages/owner/UpdateMembers";
-
-// import PaymentList from "./pages/owner/Payment";
-
-// import DailyAttendanceAll from "./pages/owner/OwnerDailyAttendance";
-// import Reports from "./pages/owner/Reports";
-// import AddPlan from "./pages/owner/AddPlan";
-// import PlanPage from "./pages/owner/PlanPage";
-// import PaymentHistory from "./pages/Members/PaymentHistory";
-// import ScanQR from "./pages/Members/ScanQR";
-// import QrDisplay from "./pages/Members/QrDisplay";
-// import GymAttendance from "./pages/Members/GymAttendance";
-// import MemberLogoutButton from "./pages/Members/MemberLogOut";
-
-
-// import MemberProfile from "./pages/Members/MemberProfile";
-
-
-// import Register from "./pages/owner/Login/Register";
-// import Home from "./pages/owner/Home";
-
-
-// import MemberPlans from "./pages/Members/memberplan";
-// import OwnerProfile from "./pages/owner/OwnerProfile";
-// import Login from "./pages/owner/Login/OwnerLogin";
-// import ForgotPassword from "./pages/owner/Login/Forgetpassword";
-// import ResetPassword from "./pages/owner/Login/Resetpassword";
-// import WorkoutDietPage from "./pages/Trainer/WorkoutDietPage";
-
-// import ActiveMembers from "./pages/owner/ActiveMembers";
-// import ExpiredMembers from "./pages/owner/ExpiringDate";
-// import Food from "./pages/Trainer/Food";
-// import MemberDiet from "./pages/Members/MemberDiet";
-// import AddTrainer from "./pages/owner/AddTrainer";
-// import TrainerList from "./pages/owner/TrainerList";
-// import Trainer from "./pages/Trainer/Trainer";
-// import AddStaff from "./pages/owner/AddStaff";
-// import useAccess from "./hooks/useAccess";
-
-
-
-
-// // ... import other member screens
-
-// // Simple role-based route protection
-// const ProtectedRoute = ({ children, role }) => {
-//   const { hasAccess } = useAccess();
-//   const userRole = sessionStorage.getItem("role");
-//   const token = sessionStorage.getItem("token");
-
-//   if (!token) return <Navigate to="/login" />;
-//   if (role && userRole !== role) return <Navigate to="/login" />;
-
-
-//   return children;
-// };
-
-// function App() {
-
-//   return (
-
-//     <Routes>
-
-//       <Route path="/" element={<Navigate to="/login" replace />} />
-//       {/* Login route */}
-//       <Route path="/login" element={<Login />} />
-//       <Route path="/register" element={<Register />} />
-//       <Route path="/forgotpassword" element={<ForgotPassword />} />
-//       <Route path="/resetpassword/:token" element={<ResetPassword />} />
-
-//       <Route path="/" element={<Layout />}>
-
-//         {/* Owner routes */}
-//         <Route
-//           path="/owner/addmember"
-//           element={
-//             <ProtectedRoute role="owner">
-//               <AddMember />
-//             </ProtectedRoute>
-//           }
-//         />
-
-
-//         <Route
-//           path="/owner/memberlist"
-//           element={
-//             <ProtectedRoute role="owner">
-//               <Memberlist />
-//             </ProtectedRoute>
-//           }
-//         />
-//         <Route
-//           path="/owner/addmember/update/:id"
-//           element={
-//             <ProtectedRoute role="owner">
-//               <UpDateMember />
-//             </ProtectedRoute>
-//           }
-//         />
-
-
-
-
-
-
-//         <Route
-//           path="/owner/home"
-//           element={
-//             <ProtectedRoute role="owner">
-//               <Home />
-//             </ProtectedRoute>
-//           }
-//         />
-
-
-//         <Route
-//           path="/owner/addstaff"
-//           element={
-//             <ProtectedRoute role="owner">
-//               <AddStaff />
-//             </ProtectedRoute>
-//           }
-//         />
-
-
-//         <Route
-//           path="/owner/addtrainer"
-//           element={
-//             <ProtectedRoute role="owner">
-//               <AddTrainer />
-//             </ProtectedRoute>
-//           }
-//         />
-
-//         <Route
-//           path="/owner/trainerdetails"
-//           element={
-//             <ProtectedRoute role="owner">
-//               <TrainerList />
-//             </ProtectedRoute>
-//           }
-//         />
-
-
-
-
-
-
-
-//         <Route path="/owner/ActiveMembers"
-//           element={
-//             <ProtectedRoute role="owner">
-//               <ActiveMembers />
-//             </ProtectedRoute>
-//           } />
-
-//         <Route path="owner/payment" element={<ProtectedRoute role="owner"><PaymentList /></ProtectedRoute>} />
-//         <Route path="owner/expiring" element={<ProtectedRoute role="owner"><ExpiredMembers /></ProtectedRoute>} />
-
-
-//         <Route path="owner/profile" element={<ProtectedRoute role="owner"><OwnerProfile /></ProtectedRoute>} />
-//         <Route path="owner/daily/attendance" element={<ProtectedRoute role="owner"><DailyAttendanceAll /></ProtectedRoute>} />
-//         <Route path="owner/reports" element={<ProtectedRoute role="owner"><Reports /></ProtectedRoute>} />
-//         <Route path="owner/addplan" element={<ProtectedRoute role="owner"><AddPlan /></ProtectedRoute>} />
-//         <Route path="owner/planpage" element={<ProtectedRoute role="owner"><PlanPage /></ProtectedRoute>} />
-
-
-//         {/* Member routes */}
-//         <Route
-//           path="/member/profile"
-//           element={
-//             <ProtectedRoute role="member">
-//               <MemberProfile />
-//             </ProtectedRoute>
-//           }
-//         />
-
-//         <Route
-//           path="/member/deitfood"
-//           element={
-//             <ProtectedRoute role="member">
-//               <MemberDiet />
-//             </ProtectedRoute>
-//           }
-//         />
-
-
-
-
-//         <Route path="member/plan" element={<ProtectedRoute role="member"><MemberPlans /></ProtectedRoute>} />
-//         <Route path="member/payments" element={<ProtectedRoute role="member"><PaymentHistory /></ProtectedRoute>} />
-//         <Route path="member/qr" element={<ProtectedRoute role="member"><QrDisplay /></ProtectedRoute>} />
-//         <Route path="member/scan" element={<ProtectedRoute role="member"><ScanQR /></ProtectedRoute>} />
-//         <Route path="member/attendance" element={<ProtectedRoute role="member"><GymAttendance /></ProtectedRoute>} />
-//         <Route path="/login" element={<ProtectedRoute role="member"><MemberLogoutButton /></ProtectedRoute>} />
-
-//         {/* Traine */}
-//         <Route path="trainer/profile" element={<ProtectedRoute role="trainer"><Trainer /></ProtectedRoute>} />
-
-//         <Route
-//           path="/trainer/food"
-//           element={
-//             <ProtectedRoute role="trainer">
-//               <Food />
-//             </ProtectedRoute>
-//           }
-//         />
-//         <Route path="/trainer/deitfood"
-//           element={
-//             <ProtectedRoute role="trainer">
-//               <WorkoutDietPage />
-//             </ProtectedRoute>
-//           } />
-
-
-
-//       </Route>
-//       {/* Catch-all */}
-//       <Route path="*" element={<Navigate to="/login" />} />
-//     </Routes>
-//   );
-// }
-
-// export default App;
 
 
 
@@ -276,6 +36,7 @@ import MemberDiet from "./pages/Members/MemberDiet";
 import Trainer from "./pages/Trainer/Trainer";
 import WorkoutDietPage from "./pages/Trainer/WorkoutDietPage";
 import Food from "./pages/Trainer/Food";
+import TrainerMembers from "./pages/Trainer/TrainerMember";
 
 /* ---------- Auth ---------- */
 import Login from "./pages/owner/Login/OwnerLogin";
@@ -316,25 +77,6 @@ const ProtectedRoute = ({ children, roles = [], feature }) => {
 
   return children;
 };
-// const ProtectedRoute = ({ children, roles = [], feature }) => {
-//   const { hasAccess } = useAccess();
-//   const role = sessionStorage.getItem("role");
-//   const token = sessionStorage.getItem("token");
-
-//   if (!token) return <Navigate to="/login" />;
-
-//   if (roles.length && !roles.includes(role)) {
-//     return <Navigate to="/login" />;
-
-//   } if (role === "owner") return children; // owner ki feature skip
-
-
-//   // 🔥 ONLY staff check
-//   if (role === "staff" && feature && !hasAccess(feature)) {
-//     return <Navigate to="/no-access" />;
-//   }
-//   return children;
-// };
 
 function App() {
   return (
@@ -547,6 +289,14 @@ function App() {
           element={
             <ProtectedRoute roles={["trainer"]}>
               <Trainer />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/trainer/member"
+          element={
+            <ProtectedRoute roles={["trainer"]}>
+              <TrainerMembers />
             </ProtectedRoute>
           }
         />

@@ -29,11 +29,7 @@ const Login = () => {
 
 
 
-            // const { token, user } = res.data;
 
-            // // Save token + role
-            // sessionStorage.setItem("token", token);
-            // sessionStorage.setItem("role", user.role);
             const { token, user } = res.data;
 
             sessionStorage.setItem("token", token);

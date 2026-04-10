@@ -2,12 +2,13 @@
 const bcrypt = require("bcrypt");
 const PaymentModel = require("../models/PaymentModel");
 const MemberModel = require("../models/MemberModel");
+const TrainerModuel = require("../models/TrainerModuel");
 
 // ✅ Add Member
 const addMember = async (req, res) => {
     try {
         const { name, phone, password, plan, amount, joinDate, hasTrainer,
-            trainerName, fitnessGoal, weight, height, healthIssues, paymentStatus } = req.body;
+            trainerName, fitnessGoal, weight, height, healthIssues, paymentStatus, ...reset } = req.body;
 
         const ownerId = req.user.id;
 
@@ -67,6 +68,19 @@ const addMember = async (req, res) => {
         }
 
 
+        // 🔥 ADD HERE
+        let trainerId = null;
+
+        if (hasTrainer === "Yes" && trainerName) {
+            const trainer = await TrainerModuel.findOne({ name: trainerName });
+
+            if (!trainer) {
+                return res.status(400).json({ message: "Trainer not found" });
+            }
+
+            trainerId = trainer._id;
+        }
+
         // 8️⃣ Create member
         const member = await MemberModel.create({
             name,
@@ -86,6 +100,8 @@ const addMember = async (req, res) => {
             status: "active",
             paymentStatus: normalizedStatus,
             planSnapshot: `${months}M`,
+            trainerId,
+            ...reset,
             ownerId
         });
 
@@ -125,6 +141,7 @@ const addMember = async (req, res) => {
     }
 };
 
+
 // ✅ Get Members
 const getMembers = async (req, res) => {
     try {
@@ -138,6 +155,7 @@ const getMembers = async (req, res) => {
 
 // ✅ Update Member
 const updateMember = async (req, res) => {
+
     try {
         const { id } = req.params;
         const { name, phone, plan, amount, joinDate, trainer,

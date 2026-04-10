@@ -1,24 +1,3 @@
-// const useAccess = () => {
-//     const role = sessionStorage.getItem("role");
-
-//     let features = [];
-
-//     try {
-//         features = JSON.parse(sessionStorage.getItem("features")) || [];
-//     } catch {
-//         features = [];
-//     }
-
-//     const hasAccess = (feature) => {
-//         if (role === "owner") return true; // 🔥 OWNER FULL ACCESS
-
-//         return features.includes(feature);
-//     };
-
-//     return { hasAccess };
-// };
-
-// export default useAccess;
 
 
 const useAccess = () => {

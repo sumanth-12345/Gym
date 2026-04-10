@@ -47,28 +47,6 @@ const getExpiringMembers = async (req, res) => {
 };
 
 
-// // 🟢 ACTIVE
-// const getActiveMembers = async (req, res) => {
-//     try {
-//         const today = new Date();
-//         today.setHours(0, 0, 0, 0);
-
-//         const future = new Date();
-//         future.setDate(today.getDate() + 5);
-
-//         const members = await MemberModel.find({
-//             ownerId: req.user._id,
-//             expiryDate: { $gt: future }
-//         });
-
-//         res.json(members);
-//     } catch (err) {
-//         console.error("Active error:", err);
-//         res.status(500).json({ message: "Server error" });
-//     }
-// };
-
-
 const getActiveMembers = async (req, res) => {
     try {
         const today = new Date();
@@ -108,80 +86,6 @@ const getActiveMembers = async (req, res) => {
     }
 };
 
-// const renewOrUpgradeMember = async (req, res) => {
-//     try {
-//         const { memberId, months, amount } = req.body;
-
-//         if (!memberId) {
-//             return res.status(400).json({ message: "MemberId required" });
-//         }
-
-
-
-//         if (!amount || amount <= 0) {
-//             return res.status(400).json({ message: "Amount required" });
-//         }
-
-//         // months optional
-//         if (months !== undefined && months <= 0) {
-//             return res.status(400).json({ message: "Invalid months" });
-//         }
-
-//         const member = await MemberModel.findById(memberId);
-
-//         if (!member) {
-//             return res.status(404).json({ message: "Member not found" });
-//         }
-
-
-
-
-//         const usedMonths = months || member.plan;
-//         // ✅ DATE LOGIC
-//         const today = new Date();
-//         let baseDate = new Date(
-//             member.expiryDate < today ? today : member.expiryDate
-//         );
-
-//         // baseDate.setMonth(baseDate.getMonth() + months);
-//         baseDate.setMonth(baseDate.getMonth() + usedMonths);
-//         member.expiryDate = baseDate;
-
-
-//         if (months) {
-//             member.plan = months; // only update in upgrade
-//         }
-
-//         member.amount = amount;
-
-//         member.paymentStatus = "pending"
-
-//         await member.save();
-
-//         // ✅ PAYMENT SAVE
-//         const payment = new PaymentModel({
-//             ownerId: req.user._id,
-//             memberId: member._id,
-//             amount: amount,
-//             paidAmount: 0,
-//             status: "Pending",
-//             date: new Date(),
-//             planSnapshot: `${usedMonths}M`,
-//             type: req.body.type || "renew"
-//         });
-
-//         await payment.save();
-
-//         res.json({
-//             message: "Renew / Upgrade success",
-//             payment
-//         });
-
-//     } catch (err) {
-//         console.error("Renew/Upgrade error:", err);
-//         res.status(500).json({ message: "Server error" });
-//     }
-// };
 
 
 const renewOrUpgradeMember = async (req, res) => {

@@ -4,7 +4,7 @@ const TrainerModuel = require("../models/TrainerModuel");
 // POST Trainer
 const postTrainer = async (req, res) => {
     try {
-        const trainer = new TrainerModuel(req.body);
+        const trainer = new TrainerModuel({ ...req.body, ownerId: req.user.id });
         await trainer.save();
 
         res.status(201).json({
@@ -17,16 +17,24 @@ const postTrainer = async (req, res) => {
     }
 };
 
-// GET Trainers
+
 const getTrainer = async (req, res) => {
     try {
-        const trainers = await TrainerModuel.find();
+        console.log("USER:", req.user);
+
+        const trainers = await TrainerModuel.find({
+            ownerId: req.user.id
+        });
+
+        console.log("TRAINERS:", trainers); // 🔥 DEBUG
+
         res.json(trainers);
+
     } catch (err) {
+        console.error("GET TRAINER ERROR:", err);
         res.status(500).json({ error: err.message });
     }
 };
-
 // UPDATE Trainer
 const updateTrainer = async (req, res) => {
     try {
@@ -53,4 +61,34 @@ const deleteTrainer = async (req, res) => {
     }
 };
 
-module.exports = { postTrainer, getTrainer, updateTrainer, deleteTrainer };
+const MemberModel = require("../models/MemberModel");
+
+// 🔥 TRAINER MEMBERS + COUNT
+const getTrainerMembers = async (req, res) => {
+    try {
+        const trainerId = req.user.id;
+
+        const members = await MemberModel.find({
+            trainerId,
+            isDeleted: false
+        });
+
+        const count = await MemberModel.countDocuments({
+            trainerId,
+            isDeleted: false
+        });
+
+        res.json({
+            count,
+            members
+        });
+
+    } catch (err) {
+        console.error("TRAINER MEMBERS ERROR:", err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+
+
+module.exports = { postTrainer, getTrainer, updateTrainer, deleteTrainer, getTrainerMembers };

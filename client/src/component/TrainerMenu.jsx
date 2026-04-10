@@ -8,6 +8,7 @@ import { Link, useLocation } from "react-router-dom";
 const menu = [
     { title: "workout+deitfood", path: "/trainer/deitfood", icon: <FaDumbbell /> },
     { title: "Food", path: "/trainer/food", icon: <FaUsers /> },
+    { title: "Trainer Member", path: "/trainer/member" }
 ];
 
 const TrainerMenu = ({ open, onItemClick }) => {

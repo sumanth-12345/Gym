@@ -1,47 +1,4 @@
 
-// // Header.jsx
-// export default function Header({ user, onLogout, onMenuClick }) {
-//     return (
-//         <header className="h-14 bg-white border-b border-gray-200 flex items-center px-6 gap-4 flex-shrink-0">
-
-//             {/* Hamburger */}
-//             <button
-//                 onClick={onMenuClick}
-//                 className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 transition-colors"
-//             >
-//                 ☰
-//             </button>
-
-//             {/* Breadcrumb */}
-//             <span className="text-sm text-gray-400">
-//                 Home / <strong className="text-gray-800 font-medium">Dashboard</strong>
-//             </span>
-
-//             <div className="flex-1" />
-
-//             {/* Search
-//             <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 cursor-text">
-//                 <span className="text-sm text-gray-400">Search...</span>
-//             </div> */}
-
-//             {/* Notification bell */}
-//             <button className="relative w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-//                 🔔
-//                 <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-red-500 rounded-full" />
-//             </button>
-
-//             {/* Avatar */}
-//             <div
-//                 onClick={onLogout}
-//                 title={`${user?.name} · Logout`}
-//                 className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-red-500 flex items-center justify-center text-white text-xs font-medium cursor-pointer"
-//             >
-//                 {user?.name?.slice(0, 2).toUpperCase()}
-//             </div>
-//         </header>
-//     );
-// }
-
 
 // Header.jsx
 import { useEffect, useRef, useState, useCallback } from "react";

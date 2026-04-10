@@ -30,16 +30,12 @@ const getMonthlyRevenue = async (req, res) => {
 
                     completed: { $sum: "$paidAmount" },
 
-                    // completed: {
-                    //     $sum: {
-                    //         $cond: [{ $eq: ["$status", "Completed"] }, "$amount", 0]
-                    //     }
-                    // },
+
 
                     pending: {
                         $sum: {
                             $subtract: ["$amount", "$paidAmount"]
-                            // $cond: [{ $eq: ["$status", "Pending"] }, "$amount", 0]
+
                         }
                     }
                 }
