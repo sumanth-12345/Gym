@@ -36,8 +36,17 @@ const MemberSchema = new mongoose.Schema({
     ownerId: { type: mongoose.Schema.Types.ObjectId, ref: "Owner", required: true },
     trainerId: {
         type: mongoose.Schema.Types.ObjectId, ref: "Trainer"
-    }
+    },
+    expiryHistory: [
+        {
+            oldExpiry: Date,
+            newExpiry: Date,
+            renewedAt: Date
+        }
+    ]
+
 });
+
 
 MemberSchema.index({ phone: 1, ownerId: 1 }, { unique: true });
 

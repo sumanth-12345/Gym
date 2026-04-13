@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const OwnerModel = require("../models/OwnerModel");
 const MemberModel = require("../models/MemberModel");
 const TrainerModuel = require("../models/TrainerModuel");
-const StaffModuel = require("../models/StaffModuel");
+
 
 
 
@@ -77,11 +77,7 @@ const OwnerLogin = async (req, res) => {
             role = "owner";
         }
 
-        // 2️⃣ PHONE USERS (staff → trainer → member)
-        if (!user && phone && password) {
-            user = await StaffModuel.findOne({ phone });
-            role = "staff";
-        }
+
 
         if (!user && phone && password) {
             user = await TrainerModuel.findOne({ phone });
@@ -121,8 +117,8 @@ const OwnerLogin = async (req, res) => {
             user: {
                 id: user._id,
                 name: user.name,
-                role,
-                features: role === "staff" ? user.features : []
+                role
+
             }
         });
 
@@ -131,78 +127,6 @@ const OwnerLogin = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
-
-
-
-
-
-
-
-
-
-
-// const OwnerLogin = async (req, res) => {
-
-//     const { email, phone, password } = req.body;
-
-//     if ((!email && !phone) || !password) {
-//         return res.status(400).json({ message: "Email and password required" });
-//     }
-//     try {
-
-//         let user, role;
-
-//         if (email) {
-//             // Owner login
-//             user = await OwnerModel.findOne({ email });
-//             role = "owner";
-//         } else if (phone) {
-//             // Member login
-//             user = await MemberModel.findOne({ phone, isDeleted: false });
-//             role = "member";
-//         } else if (phone) {
-//             // 2. Check Trainer
-//             const trainer = await TrainerModuel.findOne({ phone });
-//             if (trainer) {
-//                 return res.json({
-//                     role: "trainer",
-//                     user: trainer
-//                 });
-//             }
-//         }
-//         if (!user) {
-//             return res.status(400).json({ message: "User not found" });
-//         }
-
-//         const isMatch = await user.comparePassword(password);
-//         if (!isMatch) {
-//             return res.status(400).json({ message: "Password incorrect" });
-//         }
-
-//         // ✅ Create JWT
-//         const token = jwt.sign({ id: user._id, role }, JWT_SECRET, {
-//             expiresIn: "24h",
-//         });
-
-//         res.status(200).json({
-//             message: "Login successful",
-//             token,
-//             user: {
-//                 id: user._id,
-//                 name: user.name,
-//                 role
-//             },
-//         });
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).json({ message: "Server error" });
-//     }
-// };
-
-
-
-
-
 
 const OwnerForgot = async (req, res) => {
     try {
@@ -238,12 +162,7 @@ const OwnerRset = async (req, res) => {
         await user.save();
 
 
-        // const updateuser = await OwnerModel.findByIdAndUpdate(decoded.id, {
-        //     password
-        // })
-        // if (!updateuser) {
-        //     return res.status(404).send("User not found");
-        // }
+
 
         res.status(200).json({ message: "Password reset successful", user });
 

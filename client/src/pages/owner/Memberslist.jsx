@@ -3,25 +3,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/api";
-import useAccess from "../../hooks/useAccess";
 
 const Memberlist = () => {
     const navigate = useNavigate();
-    const { hasAccess } = useAccess();
 
     const [members, setMembers] = useState([]);
     const [search, setSearch] = useState("");
-    const [trainerFilter, setTrainerFilter] = useState("all"); // 🔥 NEW
+    const [trainerFilter, setTrainerFilter] = useState("all");
+    const [monthFilter, setMonthFilter] = useState(""); // 🔥 NEW
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
 
+    const [deleteModal, setDeleteModal] = useState(null);
+
     // 🔹 Fetch Members
     useEffect(() => {
-
-
-
-
-
         const fetchMembers = async () => {
             try {
                 const res = await API.get("/owner/addmember/all");
@@ -34,22 +30,21 @@ const Memberlist = () => {
         };
 
         fetchMembers();
-    }, [hasAccess]);
+    }, []);
 
     // 🔹 Edit
     const handleEdit = (member) => {
         navigate(`/owner/addmember/update/${member._id}`, { state: { member } });
     };
 
-    // 🔹 Delete
-    const handleDelete = async (id) => {
-        if (!window.confirm("Delete this member?")) return;
-
+    // 🔹 Delete Confirm
+    const confirmDelete = async () => {
         try {
-            await API.delete(`/owner/addmember/delete/${id}`);
-            setMembers(prev => prev.filter(m => m._id !== id));
+            await API.delete(`/owner/addmember/delete/${deleteModal._id}`);
+            setMembers(prev => prev.filter(m => m._id !== deleteModal._id));
+            setDeleteModal(null);
         } catch (err) {
-            alert(err.response?.data?.message || "Delete failed");
+            alert("Delete failed");
         }
     };
 
@@ -68,7 +63,7 @@ const Memberlist = () => {
         return "Active";
     };
 
-    // 🔥 CENTRAL FILTER LOGIC (STRONG)
+    // 🔥 FILTER LOGIC (FINAL)
     const filteredMembers = members.filter((m) => {
         const searchText = search.toLowerCase();
 
@@ -83,7 +78,21 @@ const Memberlist = () => {
             (trainerFilter === "with" && m.hasTrainer) ||
             (trainerFilter === "without" && !m.hasTrainer);
 
-        return matchesSearch && matchesTrainer;
+        // 🔥 MONTH FILTER
+        let matchesMonth = true;
+
+        if (monthFilter) {
+            const [year, month] = monthFilter.split("-");
+
+            const start = new Date(year, month - 1, 1);
+            const end = new Date(year, month, 0, 23, 59, 59);
+
+            const join = new Date(m.joinDate);
+
+            matchesMonth = join >= start && join <= end;
+        }
+
+        return matchesSearch && matchesTrainer && matchesMonth;
     });
 
     if (loading) return <p className="text-center mt-5">Loading members...</p>;
@@ -108,10 +117,9 @@ const Memberlist = () => {
                     >
                         + Add Member
                     </button>
-
                 </div>
 
-                {/* 🔥 Filters Row */}
+                {/* Filters */}
                 <div className="flex flex-col sm:flex-row gap-4 mb-4">
 
                     {/* Search */}
@@ -133,6 +141,24 @@ const Memberlist = () => {
                         <option value="with">With Trainer</option>
                         <option value="without">Without Trainer</option>
                     </select>
+
+                    {/* 🔥 Month Filter */}
+                    <input
+                        type="month"
+                        value={monthFilter}
+                        onChange={(e) => setMonthFilter(e.target.value)}
+                        className="w-full sm:w-60 px-4 py-2.5 text-sm border border-gray-200 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    {/* Clear */}
+                    {monthFilter && (
+                        <button
+                            onClick={() => setMonthFilter("")}
+                            className="px-3 py-2 text-sm bg-gray-200 rounded-lg"
+                        >
+                            Clear
+                        </button>
+                    )}
                 </div>
 
                 {/* Table */}
@@ -141,7 +167,7 @@ const Memberlist = () => {
                         <table className="w-full">
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-100">
-                                    {["#", "Name", "Phone", "Plan", "Amount", "Payment", "Join", "Expiry", "Status", "Trainer", "Goal", "Weight", "Height", "Health", "Actions"].map((h) => (
+                                    {["#", "Name", "Phone", "Plan", "Amount", "Payment", "Join", "Expiry", "Status", "Actions"].map((h) => (
                                         <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">
                                             {h}
                                         </th>
@@ -152,19 +178,26 @@ const Memberlist = () => {
                             <tbody>
                                 {filteredMembers.length > 0 ? (
                                     filteredMembers.map((m, index) => (
-                                        <tr key={m._id} className="border-b hover:bg-gray-50">
+                                        <tr
+                                            key={m._id}
+                                            onClick={() => navigate(`/owner/member/${m._id}`)}
+                                            className="border-b hover:bg-gray-50 cursor-pointer"
+                                        >
                                             <td className="px-4 py-3 text-sm text-gray-400">{index + 1}</td>
                                             <td className="px-4 py-3 text-sm font-medium">{m.name}</td>
                                             <td className="px-4 py-3 text-sm">{m.phone}</td>
                                             <td className="px-4 py-3 text-sm">{m.plan}M</td>
                                             <td className="px-4 py-3 text-sm">₹{m.amount}</td>
                                             <td className="px-4 py-3 text-sm">{m.paymentStatus}</td>
-                                            <td className="px-4 py-3 text-sm">{new Date(m.joinDate).toLocaleDateString("en-GB")}</td>
                                             <td className="px-4 py-3 text-sm">
-                                                {m.expiryDate ? new Date(m.expiryDate).toLocaleDateString("en-GB") : "—"}
+                                                {new Date(m.joinDate).toLocaleDateString("en-GB")}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm">
+                                                {m.expiryDate
+                                                    ? new Date(m.expiryDate).toLocaleDateString("en-GB")
+                                                    : "—"}
                                             </td>
 
-                                            {/* Status */}
                                             <td className="px-4 py-3">
                                                 <span className={`px-2 py-1 text-xs rounded-full
                                                     ${getStatus(m.expiryDate) === "Expired" ? "bg-red-100 text-red-600"
@@ -174,26 +207,24 @@ const Memberlist = () => {
                                                 </span>
                                             </td>
 
-                                            {/* Trainer */}
-                                            <td className="px-4 py-3 text-sm">
-                                                {m.hasTrainer ? m.trainerName : "No"}
-                                            </td>
-
-                                            <td className="px-4 py-3 text-sm">{m.fitnessGoal || "—"}</td>
-                                            <td className="px-4 py-3 text-sm">{m.weight || "—"}</td>
-                                            <td className="px-4 py-3 text-sm">{m.height || "—"}</td>
-                                            <td className="px-4 py-3 text-sm">{m.healthIssues || "—"}</td>
-
+                                            {/* Actions */}
                                             <td className="px-4 py-3">
                                                 <div className="flex gap-2">
                                                     <button
-                                                        onClick={() => handleEdit(m)}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleEdit(m);
+                                                        }}
                                                         className="px-3 py-1 bg-amber-500 text-white text-xs rounded"
                                                     >
                                                         Edit
                                                     </button>
+
                                                     <button
-                                                        onClick={() => handleDelete(m._id)}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setDeleteModal(m);
+                                                        }}
                                                         className="px-3 py-1 bg-red-500 text-white text-xs rounded"
                                                     >
                                                         Delete
@@ -204,7 +235,7 @@ const Memberlist = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="15" className="text-center py-10 text-gray-400">
+                                        <td colSpan="10" className="text-center py-10 text-gray-400">
                                             No members found
                                         </td>
                                     </tr>
@@ -215,6 +246,39 @@ const Memberlist = () => {
                     </div>
                 </div>
             </div>
+
+            {/* 🔥 DELETE MODAL */}
+            {deleteModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl p-5 w-80 text-center shadow-lg">
+
+                        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                            Delete Member
+                        </h3>
+
+                        <p className="text-sm text-gray-500 mb-4">
+                            Are you sure you want to delete <b>{deleteModal.name}</b>?
+                        </p>
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setDeleteModal(null)}
+                                className="w-full py-2 rounded-lg bg-gray-200 text-sm"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={confirmDelete}
+                                className="w-full py-2 rounded-lg bg-red-500 text-white text-sm"
+                            >
+                                Delete
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

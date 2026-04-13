@@ -5,8 +5,8 @@ const { createPlan, getPlans, deletePlan } = require("../controllers/OwnerPlanCo
 
 const router = express.Router();
 
-router.post("/create", authMiddleware(["owner", "staff"]), createPlan);
-router.get("/all", authMiddleware(["owner", "staff"]), getPlans);
-router.delete("/:id", authMiddleware(["owner", "staff"]), deletePlan);
+router.post("/create", authMiddleware(["owner"]), createPlan);
+router.get("/all", authMiddleware(["owner"]), getPlans);
+router.delete("/:id", authMiddleware(["owner"]), deletePlan);
 
 module.exports = router;

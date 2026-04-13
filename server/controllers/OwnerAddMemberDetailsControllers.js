@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const PaymentModel = require("../models/PaymentModel");
 const MemberModel = require("../models/MemberModel");
 const TrainerModuel = require("../models/TrainerModuel");
+const { calculateExpiry } = require("../utils/expiry");
 
 // ✅ Add Member
 const addMember = async (req, res) => {
@@ -105,13 +106,14 @@ const addMember = async (req, res) => {
             ownerId
         });
 
-
+        const pendingAmount = amt - paidAmount;
         // 🔥 CREATE PAYMENT (IMPORTANT)
         const payment = new PaymentModel({
             ownerId: req.user._id,
             memberId: member._id,
             amount: amt,
             paidAmount, // FULL PAID
+            pendingAmount: pendingAmount,
             status: normalizedStatus,
             date: new Date()
         });
@@ -188,6 +190,7 @@ const updateMember = async (req, res) => {
         const expiry = new Date(join);
         expiry.setMonth(expiry.getMonth() + months);
 
+
         const updated = await MemberModel.findByIdAndUpdate(
             id,
             {
@@ -209,22 +212,38 @@ const updateMember = async (req, res) => {
     }
 };
 
-// ✅ Delete Member
+
+// ✅ Delete Member + related payments (CLEAN FIX)
 const deleteMember = async (req, res) => {
     try {
         const { id } = req.params;
-        const deleted = await MemberModel.findByIdAndDelete(id);
 
-        if (!deleted) {
+        // 1. check member exists
+        const member = await MemberModel.findById(id);
+
+        if (!member) {
             return res.status(404).json({ message: "Member not found" });
         }
 
+        // 2. delete related payments FIRST (important)
+        const paymentDeleteResult = await PaymentModel.deleteMany({
+            memberId: id
+        });
 
-        res.json({ message: "Member deleted successfully" });
+        // 3. delete member
+        await MemberModel.findByIdAndDelete(id);
+
+        res.json({
+            message: "Member deleted successfully",
+            deletedMemberId: id,
+            deletedPayments: paymentDeleteResult.deletedCount
+        });
+
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Server error" });
     }
 };
+
 
 module.exports = { addMember, getMembers, updateMember, deleteMember };

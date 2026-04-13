@@ -10,9 +10,6 @@ const menu = [
     { title: "Plans", path: "/member/plan", icon: <AiOutlineUnorderedList size={18} /> },
 
     { title: "Payment History", path: "/member/payments", icon: <AiOutlineCreditCard size={18} /> },
-    { title: "View Attendance", path: "/member/attendance", icon: <AiOutlineCalendar size={18} /> },
-    { title: "QR Display", path: "/member/qr", icon: <AiOutlineQrcode size={18} /> },
-    { title: "Scan QR", path: "/member/scan", icon: <AiOutlineScan size={18} /> },
 
     { title: "Logout", path: "/member/logout", icon: <AiOutlineLogout size={18} /> },
 ];

@@ -9,9 +9,8 @@ const OwnerRouter = require("./router/ownerRegRouter");
 const ownerMemberRouter = require("./router/ownermemberRouter");
 const ownerExpiringDate = require("./router/ownerExpiringDateRouter");
 const MemberRouter = require("./router/MemberRouter");
-const MemberAttendanceRouter = require("./router/MemberAttendanceRouter");
 const ownerpaymentRouter = require("./router/ownerpaymentRouter");
-const ownerAttendanceRouter = require("./router/OwnerAttendanceRouter");
+
 const reportRouter = require("./router/reportRoutes");
 const planRouter = require("./router/PlanRouter");
 const HomeRouter = require("./router/ownerHomeRouter");
@@ -19,7 +18,9 @@ const memberPlanRoutes = require("./router/memberplanRoute");
 const OwnerprofileRouter = require("./router/OwnerProfileRoute");
 const workoutDietRoutes = require("./router/workoutDietRoutes");
 const TrainerRouter = require("./router/TrainerRouter");
-const staffRouter = require("./router/StaffRouter");
+
+const ownerRequestRouter = require("./router/ownerRequsetRoutes");
+const ownerMemberRoutes = require("./router/ownerMemberDetailsRoutes");
 
 
 const app = express();
@@ -39,7 +40,7 @@ app.use("/api/auth", OwnerRouter);
 app.use("/api/owner/addmember", ownerMemberRouter);
 app.use("/api/owner", ownerpaymentRouter)
 app.use("/api", ownerExpiringDate)
-app.use("/api/owner", ownerAttendanceRouter)
+
 app.use("/api/owner/reports", reportRouter)
 app.use("/api/owner/plan", planRouter)
 app.use("/api/owner", HomeRouter)
@@ -48,16 +49,17 @@ app.use("/api/owner", OwnerprofileRouter)
 app.use("/api/workout-diet", workoutDietRoutes);
 
 app.use("/api/trainer", TrainerRouter)
-app.use("/api/staff", staffRouter)
 
+app.use("/api/owner", ownerRequestRouter)
+app.use("/api", ownerMemberRoutes);
 // member
 
 app.use("/api/member", MemberRouter);
-app.use("/api/member/attendance", MemberAttendanceRouter);
+
 
 app.use("/api/member/plan", memberPlanRoutes);
 
-
+app.use("/uploads", express.static("uploads"));
 
 
 

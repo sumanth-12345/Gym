@@ -83,7 +83,7 @@ const ExpiredMembers = () => {
 
                 <Section title="Expiring Soon" emoji="🟡" accent="#eab308" headerBg="#fef9c3"
                     data={expiring}
-                // onRenew={handleRenew} onUpgrade={handleUpgrade}
+                    onRenew={handleRenew} onUpgrade={handleUpgrade}
                 />
 
             </div>

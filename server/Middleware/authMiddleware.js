@@ -5,7 +5,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const OwnerModel = require("../models/OwnerModel");
 const MemberModel = require("../models/MemberModel");
 const TrainerModuel = require("../models/TrainerModuel");
-const StaffModuel = require("../models/StaffModuel");
+
 
 const authMiddleware = (roles = []) => async (req, res, next) => {
     if (!req.headers.authorization || !req.headers.authorization.startsWith("Bearer")) {
@@ -19,9 +19,7 @@ const authMiddleware = (roles = []) => async (req, res, next) => {
         if (decoded.role === "owner") user = await OwnerModel.findById(decoded.id).select("-password");
         else if (decoded.role === "member") user = await MemberModel.findById(decoded.id).select("-password");
         else if (decoded.role === "trainer") user = await TrainerModuel.findById(decoded.id).select("-password")
-        else if (decoded.role === "staff") {
-            user = await StaffModuel.findById(decoded.id).select("-password")
-        }
+
         if (!user) return res.status(401).json({ message: "User not found" });
 
         if (roles.length && !roles.includes(decoded.role)) {

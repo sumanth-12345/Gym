@@ -121,7 +121,7 @@ const ActiveMembers = () => {
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="border-b border-gray-100">
-                                        {["#", "Member", "phone", "New Expiry", "Days Left", "Old Date", "Type"].map(h => (
+                                        {["#", "Member", "phone", "New Expiry", "Days Left"].map(h => (
                                             <th key={h}
                                                 className="px-5 py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap">
                                                 {h}
@@ -136,7 +136,9 @@ const ActiveMembers = () => {
                                         const dayColor = daysLeft <= 7 ? "#eab308" : "#22c55e";
 
                                         return (
-                                            <tr key={m._id} className="hover:bg-gray-50 transition-colors">
+                                            <tr key={m._id}
+                                                onClick={() => navigate(`/owner/member/${m._id}`)}
+                                                className="hover:bg-gray-50 transition-colors">
                                                 <td className="px-5 py-3 text-center text-gray-400 text-xs">{i + 1}</td>
                                                 <td className="px-5 py-3">
                                                     <div className="flex items-center gap-2 justify-center">
@@ -156,14 +158,23 @@ const ActiveMembers = () => {
                                                         {daysLeft}d left
                                                     </span>
                                                 </td>
-                                                <td className="px-5 py-3 text-center text-gray-500 whitespace-nowrap">
-                                                    {m.lastPlanDate
-                                                        ? new Date(m.lastPlanDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
+                                                {/* <td className="px-5 py-3 text-center text-gray-500 whitespace-nowrap">
+                                                    {m.oldExpiry
+                                                        ? new Date(m.oldExpiry).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
+                                                        : "—"}
+                                                </td> */}
+                                                {/* <td className="px-5 py-3 text-center text-gray-500 whitespace-nowrap">
+                                                    {m.oldExpiry && !isNaN(new Date(m.oldExpiry))
+                                                        ? new Date(m.oldExpiry).toLocaleDateString("en-IN", {
+                                                            day: "2-digit",
+                                                            month: "short",
+                                                            year: "numeric"
+                                                        })
                                                         : "—"}
                                                 </td>
                                                 <td className="px-5 py-3 text-center">
                                                     <span className="text-xs font-semibold text-gray-600">{m.lastPlanType || "—"}</span>
-                                                </td>
+                                                </td> */}
                                                 {/* <td className="px-5 py-3 text-center">
                                                     <button onClick={() => handleUpgrade(m._id)}
                                                         className="px-3 py-1.5 text-xs text-white rounded-lg hover:opacity-80 transition-opacity"

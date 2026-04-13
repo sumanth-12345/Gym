@@ -1,13 +1,13 @@
 
-
-
 import { useEffect, useState } from "react";
 import API from "../../api/api";
+import { useNavigate } from "react-router-dom";
 
 const MemberPlans = () => {
     const [plans, setPlans] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState("");
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPlans = async () => {
@@ -110,7 +110,9 @@ const MemberPlans = () => {
                                             : p.price;
 
                                         return (
-                                            <tr key={p._id} className="hover:bg-gray-50 transition-colors">
+                                            <tr key={p._id} className="hover:bg-gray-50 transition-colors"
+                                                onClick={() => navigate(`/member/recharge/${p._id}`)}
+                                            >
 
                                                 <td className="px-4 py-3 text-gray-400 text-xs">{i + 1}</td>
 

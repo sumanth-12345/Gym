@@ -6,10 +6,24 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        API.get("/owner/home")
-            .then(res => setData(res.data))
-            .catch(err => console.log(err))
-            .finally(() => setLoading(false));
+        const fetchDashboard = async () => {
+            try {
+                const token = sessionStorage.getItem("token");
+
+                const res = await API.get("/owner/home", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                setData(res.data || {});
+            } catch (err) {
+                console.log(err);
+                setData({});
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDashboard();
     }, []);
 
     if (loading) return <p className="text-center mt-10">Loading...</p>;
@@ -27,10 +41,10 @@ const Home = () => {
                     <Card title="Expired Members" value={data.expiredMembers} />
                     <Card title="Total Plans" value={data.totalPlans} />
 
-                    <Card title="Total Revenue" value={`₹${data.totalRevenue}`} />
-                    <Card title="Monthly Revenue" value={`₹${data.monthlyRevenue}`} />
-                    <Card title="Today Revenue" value={`₹${data.todayRevenue}`} />
-                    <Card title="Pending + Due" value={`₹${data.totalPendingAmount}`} />
+                    <Card title="Total Revenue" value={`₹${data.totalRevenue || 0}`} />
+                    <Card title="Monthly Revenue" value={`₹${data.monthlyRevenue || 0}`} />
+                    <Card title="Today Revenue" value={`₹${data.todayRevenue || 0}`} />
+                    <Card title="Pending Amount" value={`₹${data.totalPendingAmount || 0}`} />
 
                 </div>
             </div>

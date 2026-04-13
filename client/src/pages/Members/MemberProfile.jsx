@@ -50,8 +50,8 @@ const MemberProfile = () => {
                             { label: "Weight", value: profile.weight ? `${profile.weight} kg` : "—" },
                             { label: "Height", value: profile.height ? `${profile.height} cm` : "—" },
                             { label: "Health Issues", value: profile.healthIssues || "—" },
-                            { label: "Join Date", value: profile.joinDate ? new Date(profile.joinDate).toLocaleDateString() : "—" },
-                            { label: "Expiry Date", value: profile.expiryDate ? new Date(profile.expiryDate).toLocaleDateString() : "—" },
+                            { label: "Join Date", value: profile.joinDate ? new Date(profile.joinDate).toLocaleDateString("en-GB") : "—" },
+                            { label: "Expiry Date", value: profile.expiryDate ? new Date(profile.expiryDate).toLocaleDateString("en-GB") : "—" },
                         ].map((item, idx) => (
                             <div key={idx} className="bg-gray-50 rounded-lg px-4 py-3.5 border border-gray-100">
                                 <p className="text-xs text-gray-400 uppercase tracking-wide">{item.label}</p>

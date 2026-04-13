@@ -46,8 +46,6 @@ const Login = () => {
             } else if (user.role.toLowerCase() === "trainer") {
                 navigate("/trainer/profile");
 
-            } else if (user.role.toLowerCase() === "staff") {
-                navigate("/staff/profile"); // 🔥 FIX
 
 
             } else if (user.role.toLowerCase() === "member") {

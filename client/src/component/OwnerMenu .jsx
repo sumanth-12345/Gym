@@ -8,13 +8,15 @@ import {
     FaMoneyBill,
     FaClock,
     FaChartBar,
-    FaClipboardList,
+
     FaDumbbell,
     FaUserTie,
-    FaUserPlus
+
+    FaInbox
 } from "react-icons/fa";
+// import Inbox from "lucide-react";
 import { MdOutlineFitnessCenter } from "react-icons/md";
-import useAccess from "../hooks/useAccess";
+
 
 const menu = [
     { title: "Home", path: "/owner/home", icon: <FaHome />, feature: null },
@@ -22,6 +24,7 @@ const menu = [
     { title: "Members List", path: "/owner/memberlist", icon: <FaUsers />, feature: "memberList" },
 
     { title: "Trainer Details", path: "/owner/trainerdetails", icon: <FaUserTie />, feature: "trainerList" },
+    { name: "Requests", path: "/owner/requests", icon: <FaInbox size={18} /> }, // 🔥
 
     { title: "Plan", path: "/owner/planpage", icon: <MdOutlineFitnessCenter />, feature: "plan" },
 
@@ -31,18 +34,16 @@ const menu = [
 
     { title: "Active Members", path: "/owner/ActiveMembers", icon: <FaDumbbell />, feature: "activeMembers" },
 
-    { title: "Daily Attendance", path: "/owner/daily/attendance", icon: <FaClipboardList />, feature: "attendance" },
 
     { title: "Reports", path: "/owner/reports", icon: <FaChartBar />, feature: "reports" },
 
-    { title: "Add Staff", path: "/owner/addstaff", icon: <FaUserPlus />, feature: null }, // 🔥 owner only
 
     { title: "Profile", path: "/owner/profile", icon: <FaUserTie />, feature: null }
 ];
 
 const OwnerMenu = ({ open, onItemClick }) => {
     const location = useLocation();
-    const { hasAccess } = useAccess();
+
 
     const role = sessionStorage.getItem("role");
 
@@ -54,11 +55,8 @@ const OwnerMenu = ({ open, onItemClick }) => {
                     // ✅ OWNER → FULL ACCESS (IMPORTANT FIX)
                     if (role === "owner") return true;
 
-                    // ✅ STAFF → ONLY FEATURE BASED
-                    if (role === "staff") {
-                        if (!item.feature) return false; // hide non-feature (AddStaff etc)
-                        return hasAccess(item.feature);
-                    }
+
+
 
                     return false;
                 })

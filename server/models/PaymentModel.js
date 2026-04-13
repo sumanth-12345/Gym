@@ -6,6 +6,10 @@ const PaymentSchema = new mongoose.Schema({
         ref: "Member",
         required: true
     },
+    planId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Plan"
+    },
 
     ownerId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -20,10 +24,13 @@ const PaymentSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-
+    pendingAmount: {
+        type: Number,
+        required: true
+    },
     type: {
         type: String,
-        enum: ["renew", "upgrade"]
+        enum: ["new", "renew", "upgrade"]
     },
     date: {
         type: Date,
@@ -31,9 +38,10 @@ const PaymentSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["Pending", "Partial", "Completed"],
-        default: "Pending"
+        enum: ["PENDING", "PARTIAL", "COMPLETED"],
+        default: "PENDING"
     },
+    screenshot: String,
 
     createdAt: { type: Date, default: Date.now }
 });
