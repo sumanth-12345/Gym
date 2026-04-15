@@ -1,8 +1,6 @@
 const MemberModel = require("../models/MemberModel");
 const PaymentModel = require("../models/PaymentModel");
-
-
-
+const { checkAndActivatePlan } = require("../utils/planUtils");
 
 const getOwnerMemberDetails = async (req, res) => {
     try {
@@ -17,38 +15,49 @@ const getOwnerMemberDetails = async (req, res) => {
             return res.status(404).json({ message: "Member not found" });
         }
 
+        // 🔥 AUTO ACTIVATE UPCOMING PLAN
+        await checkAndActivatePlan(member);
+
         // 🔥 GET ALL PAYMENTS
         const payments = await PaymentModel.find({
             memberId: id,
             ownerId: req.user._id
         }).sort({ date: -1 });
 
-        // 🔥 IMPORTANT FIX → ensure correct pending
-        const cleanPayments = payments.map(p => ({
-            ...p.toObject(),
-            pendingAmount: (p.amount || 0) - (p.paidAmount || 0)
-        }));
+        // 🔥 FIXED PENDING (NO NEGATIVE VALUES)
+        const cleanPayments = payments.map(p => {
+            const paid = Number(p.paidAmount || 0);
+            const total = Number(p.amount || 0);
+            const pending = Math.max(total - paid, 0);
+
+            return {
+                ...p.toObject(),
+                pendingAmount: pending
+            };
+        });
+
+        // 🔥 EXPIRY CALCULATION
         const today = new Date();
         const expiry = member.expiryDate ? new Date(member.expiryDate) : null;
+
         let daysLeft = 0;
         if (expiry && !isNaN(expiry.getTime())) {
             daysLeft = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
         }
 
-
+        // 🔥 LAST HISTORY
         const lastHistory = member.expiryHistory?.length
             ? member.expiryHistory[member.expiryHistory.length - 1]
             : null;
 
-        // 🔥 SUMMARY FIX
+        // 🔥 SUMMARY CALCULATION (CORRECT)
         let totalPaid = 0;
         let totalPending = 0;
 
         cleanPayments.forEach(p => {
-            totalPaid += p.paidAmount || 0
-            totalPending += p.pendingAmount || 0
+            totalPaid += Number(p.paidAmount || 0);
+            totalPending += Number(p.pendingAmount || 0);
         });
-
 
         res.json({
             member: {
@@ -64,6 +73,7 @@ const getOwnerMemberDetails = async (req, res) => {
                 status: daysLeft <= 0 ? "Expired" : "Active",
                 daysLeft
             },
+
             history: cleanPayments
         });
 
@@ -72,4 +82,5 @@ const getOwnerMemberDetails = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
 module.exports = { getOwnerMemberDetails };

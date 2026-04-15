@@ -45,7 +45,7 @@ const PaymentHistory = () => {
                         <table className="w-full">
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-100">
-                                    {["#", "Amount", "Plan", "Type", "Status", "Date"].map((h) => (
+                                    {["#", "Amount", "Plan", "Status", "Date"].map((h) => (
                                         <th key={h} className="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
                                             {h}
                                         </th>
@@ -58,7 +58,7 @@ const PaymentHistory = () => {
                                         <td className="px-5 py-3.5 text-sm text-gray-400">{i + 1}</td>
                                         <td className="px-5 py-3.5 text-sm font-semibold text-blue-600">₹{p.amount}</td>
                                         <td className="px-5 py-3.5 text-sm text-gray-600">{p.planSnapshot || "—"}</td>
-                                        <td className="px-5 py-3.5 text-sm text-gray-600 capitalize">{p.type}</td>
+                                        {/* <td className="px-5 py-3.5 text-sm text-gray-600 capitalize">{p.type}</td> */}
                                         <td className="px-5 py-3.5">
                                             <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium
                                         ${p.status === "completed" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}>

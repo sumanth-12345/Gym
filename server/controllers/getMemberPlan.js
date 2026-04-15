@@ -3,7 +3,6 @@ const paymentRequestModel = require("../models/paymentRequestModel");
 const PlanModel = require("../models/PlanModel");
 
 
-// get all plans
 const getmemberplan = async (req, res) => {
     try {
         const ownerId = req.user.ownerId;
@@ -15,6 +14,8 @@ const getmemberplan = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+
 
 
 // get single plan
@@ -72,6 +73,7 @@ const createPaymentRequest = async (req, res) => {
 
 
 module.exports = {
+
     getmemberplan,
     getSinglePlan,
     createPaymentRequest,

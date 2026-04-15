@@ -21,6 +21,7 @@ const TrainerRouter = require("./router/TrainerRouter");
 
 const ownerRequestRouter = require("./router/ownerRequsetRoutes");
 const ownerMemberRoutes = require("./router/ownerMemberDetailsRoutes");
+const MemberMsgRouter = require("./router/MemberMsgRouter");
 
 
 const app = express();
@@ -55,7 +56,7 @@ app.use("/api", ownerMemberRoutes);
 // member
 
 app.use("/api/member", MemberRouter);
-
+app.use("/api/member", MemberMsgRouter)
 
 app.use("/api/member/plan", memberPlanRoutes);
 

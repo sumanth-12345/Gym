@@ -4,15 +4,7 @@ const OwnerModel = require("../models/OwnerModel");
 const MemberModel = require("../models/MemberModel");
 const TrainerModuel = require("../models/TrainerModuel");
 
-
-
-
-
-
-
 const JWT_SECRET = process.env.JWT_SECRET;
-
-
 
 const OwnerRegister = async (req, res) => {
     try {
@@ -161,12 +153,7 @@ const OwnerRset = async (req, res) => {
         user.password = password;   // plain password
         await user.save();
 
-
-
-
         res.status(200).json({ message: "Password reset successful", user });
-
-
 
     } catch (err) {
         console.log(err)

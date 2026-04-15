@@ -1,8 +1,5 @@
 const MemberModel = require("../models/MemberModel");
 const PaymentModel = require("../models/PaymentModel");
-const { calculateExpiry } = require("../utils/expiry");
-
-
 
 // 🔴 EXPIRED
 const getExpiredMembers = async (req, res) => {
@@ -91,49 +88,38 @@ const getActiveMembers = async (req, res) => {
     }
 };
 
-
-
 const renewOrUpgradeMember = async (req, res) => {
     try {
         const { memberId, months, amount, type } = req.body;
 
         if (!memberId) return res.status(400).json({ message: "MemberId required" });
         if (!amount || amount <= 0) return res.status(400).json({ message: "Amount required" });
-        if (months !== undefined && months <= 0) return res.status(400).json({ message: "Invalid months" });
-        if (!["renew", "upgrade"].includes(type)) return res.status(400).json({ message: "Invalid type" });
+        if (!["renew", "upgrade"].includes(type)) {
+            return res.status(400).json({ message: "Invalid type" });
+        }
 
         const member = await MemberModel.findById(memberId);
         if (!member) return res.status(404).json({ message: "Member not found" });
 
+        const usedMonths = Number(months || member.plan || 1);
 
-        const usedMonths = months || member.plan;
-        member.expiryHistory = member.expiryHistory || [];
-        member.expiryHistory.push({
-            oldExpiry: member.expiryDate,
-            newExpiry: calculateExpiry(member.expiryDate, usedMonths),
-            renewedAt: new Date()
-        });
-        member.expiryDate = calculateExpiry(member.expiryDate, usedMonths);
+        // =========================
+        // 🔥 FIX: ALWAYS USE OLD EXPIRY (NO LOSS SYSTEM)
+        // =========================
+        const oldExpiry = member.expiryDate ? new Date(member.expiryDate) : new Date();
 
-        let baseDate = member.expiryDate ? new Date(member.expiryDate) : new Date();
+        // 👉 ALWAYS EXTEND FROM OLD EXPIRY (EVEN IF EXPIRED)
+        const baseDate = new Date(oldExpiry);
 
-        const today = new Date();
-
-        // if already expired → start from today
-        if (baseDate.getTime() < today.getTime()) {
-            baseDate = new Date(today);
-        }
-
-        baseDate.setMonth(baseDate.getMonth() + Number(usedMonths));
+        baseDate.setMonth(baseDate.getMonth() + usedMonths);
 
         const newExpiry = baseDate;
 
+        // =========================
+        // UPDATE MEMBER
+        // =========================
         member.expiryDate = newExpiry;
 
-        // 🔥 STORE HISTORY (MAIN FIX)
-
-
-        // 🔥 UPDATE PLAN ONLY ON UPGRADE
         if (type === "upgrade") {
             member.plan = months;
         }
@@ -141,18 +127,33 @@ const renewOrUpgradeMember = async (req, res) => {
         member.amount = amount;
         member.paymentStatus = "PENDING";
 
+        // =========================
+        // HISTORY FIX
+        // =========================
+        member.expiryHistory = member.expiryHistory || [];
+
+        member.expiryHistory.push({
+            oldExpiry: oldExpiry,
+            newExpiry: newExpiry,
+            paymentDate: new Date(),
+            type: type
+        });
+
         await member.save();
 
-        // 🔥 CREATE PAYMENT RECORD
+        // =========================
+        // PAYMENT CREATE
+        // =========================
         const payment = new PaymentModel({
             ownerId: req.user._id,
             memberId: member._id,
-            amount: amount,
+            amount: Number(amount),
             paidAmount: 0,
+            pendingAmount: Number(amount),
             status: "PENDING",
             date: new Date(),
             planSnapshot: `${usedMonths}M`,
-            type: type
+            type
         });
 
         await payment.save();
@@ -160,7 +161,9 @@ const renewOrUpgradeMember = async (req, res) => {
         res.json({
             message: "Renew / Upgrade success",
             member,
-            payment
+            payment,
+            oldExpiry,
+            newExpiry
         });
 
     } catch (err) {
@@ -168,7 +171,6 @@ const renewOrUpgradeMember = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
-
 module.exports = {
     getExpiredMembers,
     getExpiringMembers,

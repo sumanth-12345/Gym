@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const PaymentModel = require("../models/PaymentModel");
 const MemberModel = require("../models/MemberModel");
 const TrainerModuel = require("../models/TrainerModuel");
-const { calculateExpiry } = require("../utils/expiry");
+
 
 // ✅ Add Member
 const addMember = async (req, res) => {
@@ -58,13 +58,13 @@ const addMember = async (req, res) => {
 
 
         // 8️⃣ Normalize paymentStatus
-        let normalizedStatus = "Pending";
+        let normalizedStatus = "PENDING";
         let paidAmount = 0;
         if (paymentStatus?.toLowerCase() === "payment completed") {
-            normalizedStatus = "Completed";
+            normalizedStatus = "COMPLETED";
             paidAmount = amt;
-        } else if (paymentStatus?.toLowerCase() === "partial") {
-            normalizedStatus = "Partial";
+        } else if (paymentStatus?.toLowerCase() === "PARTIAL") {
+            normalizedStatus = "PARTIAL";
             paidAmount = amt / 2; // example, adjust as needed
         }
 

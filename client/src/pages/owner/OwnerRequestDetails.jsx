@@ -26,7 +26,7 @@ const OwnerRequestDetails = () => {
     };
 
     const handleReject = async () => {
-        await API.put(`/owner/reject/${id}`);
+        await API.put(`/owner/reject/${id}`, { reason: "Invalid payment" });
         alert("Rejected");
         fetchData();
     };

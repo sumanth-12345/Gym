@@ -158,30 +158,7 @@ const ActiveMembers = () => {
                                                         {daysLeft}d left
                                                     </span>
                                                 </td>
-                                                {/* <td className="px-5 py-3 text-center text-gray-500 whitespace-nowrap">
-                                                    {m.oldExpiry
-                                                        ? new Date(m.oldExpiry).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
-                                                        : "—"}
-                                                </td> */}
-                                                {/* <td className="px-5 py-3 text-center text-gray-500 whitespace-nowrap">
-                                                    {m.oldExpiry && !isNaN(new Date(m.oldExpiry))
-                                                        ? new Date(m.oldExpiry).toLocaleDateString("en-IN", {
-                                                            day: "2-digit",
-                                                            month: "short",
-                                                            year: "numeric"
-                                                        })
-                                                        : "—"}
-                                                </td>
-                                                <td className="px-5 py-3 text-center">
-                                                    <span className="text-xs font-semibold text-gray-600">{m.lastPlanType || "—"}</span>
-                                                </td> */}
-                                                {/* <td className="px-5 py-3 text-center">
-                                                    <button onClick={() => handleUpgrade(m._id)}
-                                                        className="px-3 py-1.5 text-xs text-white rounded-lg hover:opacity-80 transition-opacity"
-                                                        style={{ background: "#7c3aed" }}>
-                                                        Upgrade
-                                                    </button>
-                                                </td> */}
+
                                             </tr>
                                         );
                                     })}

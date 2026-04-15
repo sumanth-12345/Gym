@@ -1,10 +1,4 @@
-
-
-
-
-
 import { Routes, Route, Navigate } from "react-router-dom";
-
 
 /* ---------- Owner Pages ---------- */
 import AddMember from "./pages/owner/AddMember";
@@ -50,6 +44,7 @@ import MemberRecharge from "./pages/Members/MemberRecharge";
 import OwnerRequests from "./pages/owner/OwnerRequests";
 import OwnerRequestDetails from "./pages/owner/OwnerRequestDetails";
 import OwnerMemberDetails from "./pages/owner/OwnerMemberDetails";
+import MemberRequests from "./pages/Members/MemberRequest";
 
 
 /* ---------- NO ACCESS ---------- */
@@ -228,6 +223,14 @@ function App() {
           element={
             <ProtectedRoute roles={["member"]}>
               <MemberProfile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/member/massage"
+          element={
+            <ProtectedRoute roles={["member"]}>
+              <MemberRequests />
             </ProtectedRoute>
           }
         />

@@ -36,6 +36,19 @@ const MemberSchema = new mongoose.Schema({
     ownerId: { type: mongoose.Schema.Types.ObjectId, ref: "Owner", required: true },
     trainerId: {
         type: mongoose.Schema.Types.ObjectId, ref: "Trainer"
+    }, currentPlan: {
+        planId: { type: mongoose.Schema.Types.ObjectId, ref: "Plan" },
+        expiryDate: Date
+    },
+
+    upcomingPlan: {
+        planId: { type: mongoose.Schema.Types.ObjectId, ref: "Plan" },
+        amount: Number,
+        duration: Number,
+        status: {
+            type: String,
+            enum: ["PENDING", "PARTIAL", "COMPLETED"]
+        }
     },
     expiryHistory: [
         {

@@ -8,7 +8,7 @@ const menu = [
     { title: "Member Profile", path: "/member/profile", icon: <AiOutlineUser size={18} /> },
     { title: "Diet Food", path: "/member/deitfood", icon: <AiOutlineVideoCamera size={18} /> },
     { title: "Plans", path: "/member/plan", icon: <AiOutlineUnorderedList size={18} /> },
-
+    { title: "Massage", path: "/member/massage" },
     { title: "Payment History", path: "/member/payments", icon: <AiOutlineCreditCard size={18} /> },
 
     { title: "Logout", path: "/member/logout", icon: <AiOutlineLogout size={18} /> },

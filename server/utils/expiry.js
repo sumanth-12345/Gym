@@ -1,21 +1,4 @@
-// const calculateExpiry = (currentExpiry, durationMonths, mode = "previous") => {
-//     const now = new Date();
-//     let baseDate;
 
-//     if (mode === "current") {
-//         baseDate = new Date(now); // today
-//     } else {
-//         baseDate = currentExpiry
-//             ? new Date(currentExpiry) // ALWAYS old expiry
-//             : new Date(now);
-//     }
-
-//     baseDate.setMonth(baseDate.getMonth() + Number(durationMonths));
-
-//     return baseDate;
-// };
-
-// module.exports = { calculateExpiry };
 
 const calculateExpiry = (currentExpiry, durationMonths, mode = "previous") => {
     let baseDate;

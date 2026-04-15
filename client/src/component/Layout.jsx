@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import jwt_decode from "jwt-decode";
-import Sidebar from "./Sidebar";
+
 import Header from "./Header";
+import Sidebar from "./sidebar";
 
 const Layout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);

@@ -1,12 +1,8 @@
-
 const jwt = require("jsonwebtoken")
 const PaymentModel = require("../models/PaymentModel")
 const MemberModel = require("../models/MemberModel")
 
-
 const JWT_SECRET = process.env.JWT_SECRET
-
-
 
 const getMyProfile = async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1]; // Bearer token
