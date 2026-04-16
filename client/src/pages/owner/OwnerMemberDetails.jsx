@@ -49,7 +49,7 @@ const OwnerMemberDetails = () => {
                         <p><b>Name:</b> {member.name}</p>
                         <p><b>Phone:</b> {member.phone}</p>
                         <p><b>Plan:</b> {member.plan} Months</p>
-                        <p><b>Join:</b> {new Date(member.joinDate).toLocaleDateString()}</p>
+                        <p><b>Join:</b> {new Date(member.joinDate).toLocaleDateString("en-GB")}</p>
                     </div>
                 </div>
 
