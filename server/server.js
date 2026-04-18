@@ -63,7 +63,9 @@ app.use("/api/member/plan", memberPlanRoutes);
 app.use("/uploads", express.static("uploads"));
 
 
-
+app.get("/api", (req, res) => {
+    res.send("working success fully 🎉")
+})
 
 
 app.use((err, req, res, next) => {
