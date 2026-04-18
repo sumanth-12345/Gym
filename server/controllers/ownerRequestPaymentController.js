@@ -1,6 +1,7 @@
 const PaymentModel = require("../models/PaymentModel");
 const MemberModel = require("../models/MemberModel");
 const paymentRequestModel = require("../models/paymentRequestModel");
+const { calculateExpiry } = require("../utils/expiry");
 
 const getOwnerRequests = async (req, res) => {
     try {
@@ -42,7 +43,9 @@ const getSingleRequest = async (req, res) => {
 };
 
 
-
+// ==============================
+// ACCEPT REQUEST (FINAL CORRECT)
+// ==============================
 const acceptRequest = async (req, res) => {
     try {
         const request = await paymentRequestModel.findById(req.params.id)
@@ -63,33 +66,47 @@ const acceptRequest = async (req, res) => {
         const paidNow = Number(request.paidAmount || 0);
         const now = new Date();
 
+        // ✅ OLD EXPIRY STORE
         const oldExpiry = member.expiryDate ? new Date(member.expiryDate) : null;
 
+        // =========================
+        // CHECK EXISTING PAYMENT
+        // =========================
         let payment = await PaymentModel.findOne({
             memberId: member._id,
             planId: plan._id,
             status: { $in: ["PENDING", "PARTIAL"] }
         });
 
-        let paymentStatus = "PARTIAL";
+        let paymentStatus;
 
         // =========================
-        // PAYMENT LOGIC
+        // ✅ CASE 1: INSTALLMENT (SAME PLAN)
         // =========================
         if (payment) {
+
             payment.paidAmount += paidNow;
             payment.pendingAmount = payment.amount - payment.paidAmount;
 
             if (payment.pendingAmount <= 0) {
                 payment.status = "COMPLETED";
                 payment.pendingAmount = 0;
-                paymentStatus = "COMPLETED";
             } else {
                 payment.status = "PARTIAL";
             }
 
             await payment.save();
-        } else {
+
+            paymentStatus = payment.status;
+            member.paymentStatus = paymentStatus;
+
+        }
+
+        // =========================
+        // ✅ CASE 2: NEW PLAN
+        // =========================
+        else {
+
             paymentStatus =
                 paidNow >= totalAmount ? "COMPLETED" : "PARTIAL";
 
@@ -105,51 +122,44 @@ const acceptRequest = async (req, res) => {
 
             await payment.save();
 
+            // member update
             member.plan = plan.duration;
             member.amount = totalAmount;
             member.fitnessGoal = plan.fitnessGoal;
+            member.paymentStatus = paymentStatus;
+
+            // =========================
+            // 🔥 EXPIRY UPDATE ONLY HERE
+            // =========================
+            let baseDate = oldExpiry ? new Date(oldExpiry) : new Date(now);
+
+            baseDate.setMonth(baseDate.getMonth() + plan.duration);
+
+            const newExpiry = baseDate;
+            member.expiryDate = newExpiry;
+
+            // =========================
+            // 🔥 HISTORY ONLY FOR NEW PLAN
+            // =========================
+            member.expiryHistory = member.expiryHistory || [];
+
+            member.expiryHistory.push({
+                oldExpiry,
+                newExpiry,
+                paymentDate: request.createdAt || new Date(),
+                renewedAt: new Date()
+            });
         }
 
-        member.paymentStatus = paymentStatus;
-
         // =========================
-        // EXPIRY FIX (NO LOSS SYSTEM)
-        // =========================
-        let baseDate;
-
-        if (oldExpiry) {
-            baseDate = new Date(oldExpiry);
-        } else {
-            baseDate = new Date(now);
-        }
-
-        baseDate.setMonth(baseDate.getMonth() + plan.duration);
-
-        const newExpiry = baseDate;
-
-        member.expiryDate = newExpiry;
-
-        // =========================
-        // HISTORY
-        // =========================
-        member.expiryHistory = member.expiryHistory || [];
-
-        member.expiryHistory.push({
-            oldExpiry,
-            newExpiry,
-            paymentDate: request.createdAt || new Date(),
-            renewedAt: new Date()
-        });
-
-        // =========================
-        // 🔥 UPCOMING PLAN FIX (ADDED NOW)
+        // 🔥 UPCOMING PLAN FIX
         // =========================
         if (paymentStatus !== "COMPLETED") {
             member.upcomingPlan = {
                 planId: plan._id,
                 amount: totalAmount,
-                paidAmount: payment.paidAmount || paidNow,
-                pendingAmount: totalAmount - (payment.paidAmount || paidNow),
+                paidAmount: payment.paidAmount,
+                pendingAmount: payment.pendingAmount, // ✅ correct
                 status: paymentStatus
             };
         } else {
@@ -163,9 +173,7 @@ const acceptRequest = async (req, res) => {
         res.json({
             message: "Request accepted successfully",
             member,
-            payment,
-            oldExpiry,
-            newExpiry
+            payment
         });
 
     } catch (err) {
@@ -173,6 +181,8 @@ const acceptRequest = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+
 
 
 const rejectRequest = async (req, res) => {
