@@ -11,5 +11,8 @@
     "nodemailer": "^8.0.4",
     "qrcode": "^1.5.4",
     "twilio": "^5.13.1"
+  },
+  "scripts": {
+    "build": "cd client && npm install && npm run build"
   }
 }
